@@ -144,6 +144,7 @@ void loop() {
   }
   if (cur_state && ((millis() - last_command_time) > info.time * 1000)) {
     digitalWrite(LED_BUILTIN, 0);
+    bot.sendMessage("Выключено", last_chat_id);
     cur_state = false;
   }
 }
