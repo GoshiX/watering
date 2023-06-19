@@ -46,6 +46,20 @@ void try_to_connect() {
   Serial.println(WiFi.localIP());
 }
 
+bool check_num(String msg) {
+  int res = 0;
+  for (int i = 5 ; i < msg.length(); i++) {
+    if ((msg[i] >= '0') && (msg[i] <= '9')) {
+      res *= 10;
+      res += msg[i] - '0';
+    } else {
+      return false;
+    }
+  }
+  info.time = res;
+  return true;
+}
+
 void newMsg(FB_msg& msg) {
   // выводим ID чата, имя юзера и текст сообщения
   Serial.print(msg.chatID);     // ID чата 
@@ -140,6 +154,13 @@ void loop() {
     bot.sendMessage("Wifi ssid: " + info.ssid, last_chat_id);
     bot.sendMessage("Current time: " + String(info.time), last_chat_id);
     bot.sendMessage("Local IP: " + IPtoString(WiFi.localIP()), last_chat_id);
+    last_command = "";
+  } else if (last_command.startsWith("/set")) {
+    if (check_num(last_command)) {
+      bot.sendMessage("Time set to " + String(info.time), last_chat_id);
+    } else {
+      bot.sendMessage("Invalid number", last_chat_id);
+    }
     last_command = "";
   }
   if (cur_state && ((millis() - last_command_time) > info.time * 1000)) {
